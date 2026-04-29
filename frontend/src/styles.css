@@ -1,0 +1,92 @@
+/* Минимальные стили для аккуратного MVP */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f8;
+}
+
+.page-container {
+  max-width: 420px;
+  margin: 50px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.app-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #dcdfe6;
+  border-radius: 10px;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border 0.2s;
+}
+.form-input:focus {
+  outline: none;
+  border-color: #409eff;
+}
+
+.btn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary {
+  background-color: #409eff;
+  color: white;
+}
+.btn-primary:hover {
+  background-color: #337ecc;
+}
+
+.btn-link {
+  background: none;
+  color: #409eff;
+  text-align: center;
+  font-weight: 500;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
+.error-message {
+  color: #e54545;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.text-link {
+  color: #409eff;
+  text-decoration: none;
+  font-weight: 500;
+}
+.text-link:hover {
+  text-decoration: underline;
+}
+
+.helper-text {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 14px;
+  color: #666;
+}
