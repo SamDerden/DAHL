@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>2GIS Route MVP</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Библиотека карты 2ГИС -->
+  <script src="https://mapgl.2gis.com/api/js/v1"></script>
+
+  <!-- Плагин маршрутов 2ГИС -->
+  <script src="https://unpkg.com/@2gis/mapgl-directions@latest/dist/directions.js"></script>
+</head>
+
+<body>
+  <div class="sidebar">
+    <h2>Маршрут</h2>
+
+    <p>Кликай по карте, чтобы добавить точки.</p>
+
+    <button id="buildRouteBtn">Построить маршрут</button>
+    <button id="clearBtn">Очистить</button>
+
+    <h3>Точки:</h3>
+    <ol id="pointsList"></ol>
+  </div>
+
+  <div id="map"></div>
+
+  <!-- Наш основной JS-код -->
+  <script src="script.js"></script>
+</body>
+</html>
