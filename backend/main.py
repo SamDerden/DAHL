@@ -402,3 +402,93 @@ def extract_city_from_prompt(prompt: str) -> Optional[str]:
             if alt in prompt_lower:
                 return city
     return None
+    # ------------------ 2ГИС Интеграция ------------------
+import os
+import requests
+from fastapi import Query, HTTPException
+from typing import Optional
+
+TWO_GIS_API_KEY = os.getenv("TWO_GIS_API_KEY", "")
+
+@app.get("/api/2gis/place")
+async def get_place_from_2gis(name: str = Query(...), city: str = Query(None)):
+    """Получить данные о месте из 2ГИС"""
+    if not TWO_GIS_API_KEY:
+        raise HTTPException(status_code=500, detail="2GIS API ключ не настроен")
+    
+    try:
+        url = "https://catalog.api.2gis.com/3.0/items"
+        params = {
+            "key": TWO_GIS_API_KEY,
+            "q": f"{name}{', ' + city if city else ''}",
+            "fields": "items.address,items.reviews_count,items.rating,items.photos,items.work_hours,items.point,items.phone,items.website"
+        }
+        
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
+        
+        if data.get("result", {}).get("items"):
+            place = data["result"]["items"][0]
+            return {
+                "id": place.get("id"),
+                "name": place.get("name"),
+                "address": place.get("address", {}).get("address_string"),
+                "lat": float(place.get("point", {}).get("lat", 0)),
+                "lng": float(place.get("point", {}).get("lon", 0)),
+                "rating": place.get("rating"),
+                "reviews_count": place.get("reviews_count"),
+                "photos": [p["url"] for p in place.get("photos", [])[:5]],
+                "work_hours": place.get("work_hours"),
+                "phone": place.get("phone"),
+                "website": place.get("website"),
+                "source": "2gis"
+            }
+        
+        raise HTTPException(status_code=404, detail="Место не найдено в 2ГИС")
+    
+    except requests.RequestException as e:
+        raise HTTPException(status_code=503, detail=f"Ошибка 2ГИС API: {str(e)}")
+
+@app.get("/api/2gis/search")
+async def search_2gis(
+    query: str = Query(...),
+    lat: float = Query(...),
+    lng: float = Query(...),
+    radius: int = Query(1000)
+):
+    """Поиск мест рядом с координатами"""
+    if not TWO_GIS_API_KEY:
+        raise HTTPException(status_code=500, detail="2GIS API ключ не настроен")
+    
+    try:
+        url = "https://catalog.api.2gis.com/3.0/items"
+        params = {
+            "key": TWO_GIS_API_KEY,
+            "q": query,
+            "point": f"{lng},{lat}",
+            "radius": radius,
+            "fields": "items.address,items.reviews_count,items.rating,items.photos,items.work_hours,items.point"
+        }
+        
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
+        
+        return {
+            "items": [
+                {
+                    "id": item.get("id"),
+                    "name": item.get("name"),
+                    "lat": float(item.get("point", {}).get("lat", 0)),
+                    "lng": float(item.get("point", {}).get("lon", 0)),
+                    "address": item.get("address", {}).get("address_string"),
+                    "rating": item.get("rating"),
+                    "photos": [p["url"] for p in item.get("photos", [])[:3]]
+                }
+                for item in data.get("result", {}).get("items", [])
+            ]
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Ошибка 2ГИС: {str(e)}")
